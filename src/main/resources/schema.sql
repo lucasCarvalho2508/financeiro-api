@@ -1,6 +1,0 @@
-CREATE TABLE IF NOT EXISTS cartoes (
-    id UUID NOT NULL PRIMARY KEY,
-    nome VARCHAR(30) NOT NULL,
-    bandeira VARCHAR(255),
-    data_criacao TIMESTAMP NOT NULL
-);
