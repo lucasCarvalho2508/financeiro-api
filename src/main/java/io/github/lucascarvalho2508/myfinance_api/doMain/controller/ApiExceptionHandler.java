@@ -1,6 +1,7 @@
 package io.github.lucascarvalho2508.myfinance_api.doMain.controller;
 
 import io.github.lucascarvalho2508.myfinance_api.doMain.dtos.response.Error;
+import io.github.lucascarvalho2508.myfinance_api.doMain.exception.RegistroNaoEncontradoException;
 import io.github.lucascarvalho2508.myfinance_api.doMain.exception.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,11 +18,14 @@ import java.util.Map;
 @RestControllerAdvice
 public class ApiExceptionHandler {
 
+    private static final DateTimeFormatter TIMESTAMP_FORMATTER =
+            DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<?> handleValidationException(ValidationException e) {
         var status = HttpStatus.UNPROCESSABLE_CONTENT;
         var body = Map.of(
-                "timestamp", LocalDateTime.now(),
+                "timestamp", LocalDateTime.now().format(TIMESTAMP_FORMATTER),
                 "status", status.value(),
                 "errors", e.getMessage(),
                 "camposInvalidos", e.getErrors()
@@ -38,10 +43,23 @@ public class ApiExceptionHandler {
 
         var status = HttpStatus.UNPROCESSABLE_CONTENT;
         var body = Map.of(
-                "timestamp", LocalDateTime.now(),
+                "timestamp", LocalDateTime.now().format(TIMESTAMP_FORMATTER),
                 "status", status.value(),
                 "errors", e.getMessage(),
                 "camposInvalidos", erros
+        );
+
+        return ResponseEntity.status(status).body(body);
+    }
+
+    @ExceptionHandler(RegistroNaoEncontradoException.class)
+    public ResponseEntity<?> registroNaoEncontradoException(RegistroNaoEncontradoException e) {
+        var status = HttpStatus.NOT_FOUND;
+        var body = Map.of(
+                "timestamp", LocalDateTime.now().format(TIMESTAMP_FORMATTER),
+                "status", status.value(),
+                "errors", e.getMessage(),
+                "mensagem", e.getMessage()
         );
 
         return ResponseEntity.status(status).body(body);

@@ -44,7 +44,7 @@ class CartaoMapperTest {
         assertEquals(cartao.getBandeira(), detalhes.bandeira());
         assertEquals(dataCriacao, detalhes.dataCriacao());
 
-        mapper.atualizar(new CartaoForm("Nome atualizado", Bandeira.ELO), cartao);
+        mapper.atualizar(cartao, new CartaoForm("Nome atualizado", Bandeira.ELO));
         assertEquals("Nome atualizado", cartao.getNome());
         assertEquals(Bandeira.ELO, cartao.getBandeira());
         assertEquals(id, cartao.getId());

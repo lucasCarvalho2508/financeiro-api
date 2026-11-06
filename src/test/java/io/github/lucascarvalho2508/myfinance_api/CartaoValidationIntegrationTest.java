@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.matchesPattern;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -26,11 +27,12 @@ class CartaoValidationIntegrationTest {
         mockMvc.perform(post("/cartoes")
                         .contentType("application/json")
                         .content("{\"bandeira\":\"VISA\"}"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value(400))
-                .andExpect(jsonPath("$.message").value("Erro de validação"))
-                .andExpect(jsonPath("$.errors[0].field").value("nome"))
-                .andExpect(jsonPath("$.errors[0].message").value("O nome é obrigatório"));
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.timestamp")
+                        .value(matchesPattern("\\d{2}/\\d{2}/\\d{4} \\d{2}:\\d{2}")))
+                .andExpect(jsonPath("$.status").value(422))
+                .andExpect(jsonPath("$.camposInvalidos[0].field").value("nome"))
+                .andExpect(jsonPath("$.camposInvalidos[0].message").value("O nome é obrigatório"));
     }
 
     @Test
@@ -38,9 +40,10 @@ class CartaoValidationIntegrationTest {
         mockMvc.perform(post("/cartoes")
                         .contentType("application/json")
                         .content("{\"nome\":\"  \",\"bandeira\":\"VISA\"}"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.errors[0].field").value("nome"))
-                .andExpect(jsonPath("$.errors[0].message").value("O nome é obrigatório"));
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.status").value(422))
+                .andExpect(jsonPath("$.camposInvalidos[0].field").value("nome"))
+                .andExpect(jsonPath("$.camposInvalidos[0].message").value("O nome é obrigatório"));
     }
 
     @Test
@@ -48,9 +51,10 @@ class CartaoValidationIntegrationTest {
         mockMvc.perform(post("/cartoes")
                         .contentType("application/json")
                         .content("{\"nome\":\"1234567890123456789012345678901\",\"bandeira\":\"VISA\"}"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.errors[0].field").value("nome"))
-                .andExpect(jsonPath("$.errors[0].message")
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.status").value(422))
+                .andExpect(jsonPath("$.camposInvalidos[0].field").value("nome"))
+                .andExpect(jsonPath("$.camposInvalidos[0].message")
                         .value("O nome deve possuir no máximo 30 caracteres"));
     }
 
@@ -59,9 +63,10 @@ class CartaoValidationIntegrationTest {
         mockMvc.perform(post("/cartoes")
                         .contentType("application/json")
                         .content("{\"nome\":\"Meu cartão\"}"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.errors[0].field").value("bandeira"))
-                .andExpect(jsonPath("$.errors[0].message").value("A bandeira é obrigatória"));
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.status").value(422))
+                .andExpect(jsonPath("$.camposInvalidos[0].field").value("bandeira"))
+                .andExpect(jsonPath("$.camposInvalidos[0].message").value("A bandeira é obrigatória"));
     }
 
     @Test
@@ -72,6 +77,25 @@ class CartaoValidationIntegrationTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").isNotEmpty())
                 .andExpect(jsonPath("$.nome").value("Meu cartão"))
-                .andExpect(jsonPath("$.bandeira").value("VISA"));
+                .andExpect(jsonPath("$.bandeira").value("VISA"))
+                .andExpect(jsonPath("$.dataCriacao")
+                        .value(matchesPattern("\\d{2}/\\d{2}/\\d{4} \\d{2}:\\d{2}")));
+    }
+
+    @Test
+    void formatsTimestampForDuplicateNameValidation() throws Exception {
+        String request = "{\"nome\":\"Cartão duplicado\",\"bandeira\":\"VISA\"}";
+
+        mockMvc.perform(post("/cartoes")
+                        .contentType("application/json")
+                        .content(request))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(post("/cartoes")
+                        .contentType("application/json")
+                        .content(request))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.timestamp")
+                        .value(matchesPattern("\\d{2}/\\d{2}/\\d{4} \\d{2}:\\d{2}")));
     }
 }

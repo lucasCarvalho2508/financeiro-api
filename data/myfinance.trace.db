@@ -1,0 +1,26 @@
+2026-11-02 09:12:27.194364-03:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    create table cartoes (\000d\000a        id uuid not null,\000d\000a        bandeira enum ([*]),\000d\000a        data_criacao timestamp(6) not null,\000d\000a        nome varchar(30) not null,\000d\000a        primary key (id)\000d\000a    )"; expected "INTERSECTS (, NOT, EXISTS, UNIQUE, INTERSECTS"; SQL statement:
+
+    create table cartoes (
+        id uuid not null,
+        bandeira enum (),
+        data_criacao timestamp(6) not null,
+        nome varchar(30) not null,
+        primary key (id)
+    ) [42001-240]
+2026-11-02 09:18:45.396240-03:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "[*]selec * from cartoes"; expected "SAVEPOINT, SCRIPT, SHUTDOWN"; SQL statement:
+selec * from cartoes [42001-240]
+2026-11-02 09:26:53.219774-03:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000d\000a    create table cartoes (\000d\000a        id uuid not null,\000d\000a        bandeira enum ([*]),\000d\000a        data_criacao timestamp(6) not null,\000d\000a        nome varchar(30) not null,\000d\000a        primary key (id)\000d\000a    )"; expected "INTERSECTS (, NOT, EXISTS, UNIQUE, INTERSECTS"; SQL statement:
+
+    create table cartoes (
+        id uuid not null,
+        bandeira enum (),
+        data_criacao timestamp(6) not null,
+        nome varchar(30) not null,
+        primary key (id)
+    ) [42001-240]
+2026-11-02 09:29:37.495818-03:00 jdbc[14]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "CARTOES" not found (this database is empty); SQL statement:
+SELECT * FROM cartoes [42104-240]

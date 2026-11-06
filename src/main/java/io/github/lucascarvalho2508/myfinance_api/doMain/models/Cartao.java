@@ -16,13 +16,22 @@ public class Cartao {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "nome", nullable = false, length = 30)
+    @Column(
+            name = "nome",
+            nullable = false,
+            length = 30,
+            unique = true
+    )
     private String nome;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Bandeira bandeira;
 
-    @Column(name = "data_criacao", nullable = false, updatable = false)
+    @Column(name = "data_criacao",
+            nullable = false,
+            updatable = false
+    )
     private LocalDateTime dataCriacao;
 
     @PrePersist
