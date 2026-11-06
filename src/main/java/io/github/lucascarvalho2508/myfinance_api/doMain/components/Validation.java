@@ -1,18 +1,26 @@
 package io.github.lucascarvalho2508.myfinance_api.doMain.components;
 
 import io.github.lucascarvalho2508.myfinance_api.doMain.dtos.request.CartaoForm;
+import io.github.lucascarvalho2508.myfinance_api.doMain.dtos.response.Error;
+import io.github.lucascarvalho2508.myfinance_api.doMain.repository.CartaoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class Validation {
+    @Autowired
+    private CartaoRepository repository;
 
-    public void validar(CartaoForm form) {
-        if (form.nome() == null || form.nome().isBlank()) {
-            throw new IllegalArgumentException("O nome do cartão não pode ser nulo ou vazio.");
+    public ValidationResult validar(CartaoForm form) {
+        var result = ValidationResult.novo();
+
+        if(repository.findByNome(form.nome()).isPresent()) {
+            result.addError(
+                    new Error("nome",
+                            "Já existe um cartão com esse nome")
+            );
         }
-        if (form.bandeira() == null) {
-            throw new IllegalArgumentException("A bandeira do cartão não pode ser nula.");
-        }
+
+        return result;
     }
 }
-

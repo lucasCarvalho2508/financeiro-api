@@ -27,6 +27,6 @@ public class Cartao {
 
     @PrePersist
     public void prepersist(){
-        setDataCriacao(LocalDateTime.now());
+        dataCriacao = LocalDateTime.now();
     }
 }

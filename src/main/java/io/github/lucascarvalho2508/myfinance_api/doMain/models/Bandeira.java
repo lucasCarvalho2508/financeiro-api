@@ -4,6 +4,5 @@ public enum Bandeira {
     VISA,
     MASTERCARD,
     ELO,
-    AMERICAN_EXPRESS,
-    HIPERCARD
+    AMERICAN_EXPRESS
 }
