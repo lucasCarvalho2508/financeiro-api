@@ -34,7 +34,7 @@ public class CartaoService {
 
 
     public CartaoDetlhes criar(CartaoForm form) {
-        var result = validation.validar(form);
+        var result = validation.validar(form, null);
         if (result.isErros()) {
             throw new ValidationException(result.getErrors());
         }
@@ -59,7 +59,7 @@ public class CartaoService {
                 .findById(id)
                 .orElseThrow( () -> new RegistroNaoEncontradoException());
 
-        var novo = validation.validar(form);
+        var novo = validation.validar(form, id);
         if (novo.isErros()) {
             throw new ValidationException(novo.getErrors());
         }

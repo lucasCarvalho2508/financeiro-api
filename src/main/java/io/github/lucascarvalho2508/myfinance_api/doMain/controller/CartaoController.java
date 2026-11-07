@@ -4,7 +4,6 @@ import io.github.lucascarvalho2508.myfinance_api.doMain.dtos.request.CartaoForm;
 import io.github.lucascarvalho2508.myfinance_api.doMain.dtos.response.CartaoDetlhes;
 import io.github.lucascarvalho2508.myfinance_api.doMain.service.CartaoService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,26 +14,26 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/cartoes")
 public class CartaoController {
 
-    @Autowired
-    private CartaoService service;
+    private final CartaoService service;
+
+    public CartaoController(CartaoService service) {
+        this.service = service;
+    }
 
     @PostMapping
     public ResponseEntity<CartaoDetlhes> criar(@Valid @RequestBody CartaoForm form) {
-        CartaoDetlhes cartaoDetlhes = service.criar(form);
-        return ResponseEntity.status(HttpStatus.CREATED).body(cartaoDetlhes);
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.criar(form));
     }
 
     @GetMapping("{id}")
     public ResponseEntity<CartaoDetlhes> obterDetalhes(@PathVariable("id") UUID id) {
-        CartaoDetlhes cartaoDetlhes = service.obterDetalhes(id);
-        return ResponseEntity.ok(cartaoDetlhes);
+        return ResponseEntity.ok(service.obterDetalhes(id));
     }
 
     @PutMapping("{id}")
