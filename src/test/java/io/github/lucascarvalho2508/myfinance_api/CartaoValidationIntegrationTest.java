@@ -83,6 +83,19 @@ class CartaoValidationIntegrationTest {
     }
 
     @Test
+    void acceptsDifferentNameWhenAnotherCardAlreadyExists() throws Exception {
+        mockMvc.perform(post("/cartoes")
+                        .contentType("application/json")
+                        .content("{\"nome\":\"Cartão existente\",\"bandeira\":\"VISA\"}"))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(post("/cartoes")
+                        .contentType("application/json")
+                        .content("{\"nome\":\"Outro cartão\",\"bandeira\":\"VISA\"}"))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
     void formatsTimestampForDuplicateNameValidation() throws Exception {
         String request = "{\"nome\":\"Cartão duplicado\",\"bandeira\":\"VISA\"}";
 
